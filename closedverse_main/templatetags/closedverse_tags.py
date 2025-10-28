@@ -1,6 +1,5 @@
 from django import template
 from closedverse_main.util import HumanTime
-from closedverse_main.models import mii_domain, studio_endpoint
 from closedverse import settings
 
 register = template.Library()
@@ -23,18 +22,6 @@ def color_theme(request):
     else:
         theme = None
     return theme
-@register.simple_tag
-def studioonly(studio_code):
-	if not studio_code or len(studio_code) != 94:
-		return settings.STATIC_URL + 'img/anonymous-mii.png'
-	else:
-		return '{1}?data={0}'.format(studio_code, studio_endpoint)
-@register.simple_tag
-def miionly(mh):
-	if not mh:
-		return settings.STATIC_URL + 'img/anonymous-mii.png'
-	else:
-		return '{1}{0}_normal_face.png'.format(mh, mii_domain)
 @register.simple_tag
 def time(stamp, full=False):
 	return HumanTime(stamp.timestamp(), full) or "Less than a minute ago"

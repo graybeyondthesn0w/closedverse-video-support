@@ -3301,13 +3301,11 @@ mode_post = 0;
 									url: inp.attr('data-action') + inp.val(),
 									type: 'GET',
 									success: function(a) {
-										if(a == '') {
-											icon.addClass('none');
-											icon.attr('src', '');
-										} else {
-											icon.removeClass('none');
-											icon.attr('src', inp.attr('data-mii-domain') + a + '_happy_face.png');
-										}
+										a = inp.val();
+										icon.removeClass('none');
+										var img = inp.attr('data-mii-tmpl').replace('{0}', a);
+										$('.nnid-icon.mii').attr('src', img);
+										icon.attr('src', img);
 										$('input[name=mh]').val(a);
 									}, error: function(a) {
 										$('p.red').html(a.responseText);
@@ -3450,11 +3448,9 @@ mode_post = 0;
 								url: inp.attr('data-action') + inp.val(),
 								type: 'GET',
 								success: function(a) {
-									if(a == '') {
-										$('.nnid-icon.mii').attr('src', '');
-									} else {
-										$('.nnid-icon.mii').attr('src', inp.attr('data-mii-domain') + a + '_normal_face.png');
-									}
+									a = inp.val();
+									var img = inp.attr('data-mii-tmpl').replace('{0}', a);
+									$('.nnid-icon.mii').attr('src', img);
 									$('input[name=mh]').val(a);
 								}, error: function(a) {
 									$('p.error').html(a.responseText);

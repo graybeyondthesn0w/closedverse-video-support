@@ -117,7 +117,7 @@ urlpatterns = [
 
 
 	# Util, right now we are away from the primary appo
-	url(r'origin$', views.origin_id, name='origin-id-get'),
+	#url(r'origin$', views.origin_id, name='origin-id-get'),
 	# :^)
 	#url(r'openverse.png', views.openverse_logo, name='openverse-logo'),
 	#url(r'media/?$', lambda request: redirect('https://cimages.termy.xyz/media/'+request.GET.get('message')), name='redir'),

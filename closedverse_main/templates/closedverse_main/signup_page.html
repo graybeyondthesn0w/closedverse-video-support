@@ -10,7 +10,7 @@
 			{% if invite_only %}<h3 class="label"><label><span class="red">*</span> Invite code: <input type="text" class="auth-input" name="invite_code" maxlength="64" minlength="4" placeholder="Invite code"></label></h3>{% endif %}
 			<h3 class="label"><label><span class="red">*$</span> Username: <input type="text" class="auth-input" name="username" maxlength="32" minlength="4" placeholder="Username"></label></h3>
 			<h3 class="label"><label><span class="red">*</span>Nickname: <input type="text" class="auth-input" name="nickname" maxlength="32" placeholder="Nick/Mii name?"></label></h3>
-			<h3 class="label nnid"><label>Nintendo Network ID: <input type="text" class="auth-input" name="origin_id" maxlength="16" minlength="6" placeholder="NNID" data-mii-domain="{{ mii_domain }}" data-action="{{ mii_endpoint }}">
+			<h3 class="label nnid"><label>Nintendo Network ID: <input type="text" class="auth-input" name="origin_id" maxlength="16" minlength="6" placeholder="NNID" data-mii-tmpl="{{ mii_tmpl }}" data-action="{{ mii_endpoint }}">
 				<img class="none">
 			</label></h3>
 			<input type="hidden" name="mh">

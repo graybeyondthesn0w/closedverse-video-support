@@ -11,6 +11,9 @@ urllib3
 pillow
 lxml
 
+# ONLY for python 3.13
+legacy-cgi
+
 # no longer needed (commit 005369f929562907c63af0f52eab19a035826e8d):
 #passlib
 #bcrypt

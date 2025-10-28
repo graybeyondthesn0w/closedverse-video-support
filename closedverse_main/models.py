@@ -166,11 +166,15 @@ class Role(models.Model):
 		return "role \"" + str(self.organization) + "\", name " + str(self.image)
 
 #mii_domain = 'https://mii-secure.cdn.nintendo.net'
-# as of writing, mii-secure is unstable, nintendo please do not f*ck me for this
-mii_domain = 'https://s3.us-east-1.amazonaws.com/mii-images.account.nintendo.net/'
 
 # endpoint for mii studio rendering
-studio_endpoint = 'https://studio.mii.nintendo.com/miis/image.png'
+# studio.mii.nintendo.com will work but not for NNIDs
+studio_endpoint = 'https://mii-unsecure.ariankordi.net/miis/image.png'
+
+fmt_studio = studio_endpoint + '?data={0}&type=face&expression={1}&width=128'
+fmt_nnid = studio_endpoint + '?nnid={0}&type=face&expression={1}&width=128'
+fmt_nnid_normal = studio_endpoint + '?nnid={0}&type=face&width=128'
+fmt_nnid_happy = studio_endpoint + '?nnid={0}&type=face&expression=happy&width=128'
 
 class User(AbstractBaseUser):
 	id = models.AutoField(primary_key=True)
@@ -335,32 +339,48 @@ class User(AbstractBaseUser):
 			return 2
 		else:
 			return True
+
+	@staticmethod
+	def get_mii_studio_feeling(feeling=0):
+		return {
+			#0: 'normal',  # this is default so is it really necessary
+			1: 'smile_open_mouth',
+			2: 'like_wink_left',
+			3: 'surprise_open_mouth',
+			4: 'frustrated',
+			5: 'sorrow',
+		}.get(feeling, 'normal')
+	def is_studio_avatar(self):
+		return len(self.avatar) == 94 or len(self.avatar) == 92  # latter is STUDIO CODE
+		# 92 byte STUDIO CODES are only supported on mii-unsecure.ariankordi.net
+	def do_avatar_nnidonly(self):
+		if self.has_mh and self.avatar and not self.is_studio_avatar():
+			return fmt_nnid.format(self.avatar, User.get_mii_studio_feeling(0))
+		else:
+			return settings.STATIC_URL + 'img/anonymous-mii.png'
+	def do_avatar_studioonly(self):
+		if self.has_mh and self.avatar and self.is_studio_avatar():
+			return fmt_studio.format(self.avatar, User.get_mii_studio_feeling(0))
+		else:
+			return settings.STATIC_URL + 'img/anonymous-mii.png'
 	def do_avatar(self, feeling=0):
 		if self.has_mh and self.avatar:
 			# mii studio codes/hashes should always be 94 chars long
-			if len(self.avatar) == 94:
-				# assuming this is a mii studio code
-				feeling = {
-					#0: 'normal',  # this is default so is it really necessary
-					1: 'smile_open_mouth',
-					2: 'like_wink_left',
-					3: 'surprise_open_mouth',
-					4: 'frustrated',
-					5: 'sorrow',
-				}.get(feeling, 'normal')
-				url = '{2}?data={0}&type=face&expression={1}&width=128' \
-					.format(self.avatar, feeling, studio_endpoint)
+			feeling = User.get_mii_studio_feeling(feeling)
+			if self.is_studio_avatar():
+				return fmt_studio.format(self.avatar, feeling)
 			else:
-				feeling = {
-				0: 'normal',
-				1: 'happy',
-				2: 'like',
-				3: 'surprised',
-				4: 'frustrated',
-				5: 'puzzled',
-				}.get(feeling, "normal")
-				url = '{2}{0}_{1}_face.png'.format(self.avatar, feeling, mii_domain)
-			return url
+				return fmt_nnid.format(self.avatar, feeling)
+			#elif 0:
+			#	feeling = {
+			#	0: 'normal',
+			#	1: 'happy',
+			#	2: 'like',
+			#	3: 'surprised',
+			#	4: 'frustrated',
+			#	5: 'puzzled',
+			#	}.get(feeling, "normal")
+			#	return '{2}{0}_{1}_face.png'.format(self.avatar, feeling, mii_domain)
 		elif not self.avatar:
 			return settings.STATIC_URL + 'img/anonymous-mii.png'
 		elif self.avatar == 's':

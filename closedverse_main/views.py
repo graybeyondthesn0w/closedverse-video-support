@@ -27,8 +27,9 @@ from django.contrib.auth.hashers import identify_hasher
 #from silk.profiling.profiler import silk_profile
 
 # client-side mii fetch GET endpoint (like pf2m.com/hash if it supported cors)
-mii_endpoint = 'https://nnidlt.murilo.eu.org/api.php?output=hash_only&env=production&user_id='
-#mii_endpoint = '/origin?a='
+#mii_endpoint = 'https://nnidlt.murilo.eu.org/api.php?output=hash_only&env=production&user_id='
+##mii_endpoint = '/origin?a='
+mii_endpoint = 'https://mii-unsecure.ariankordi.net/mii_data/'
 if hasattr(settings, 'mii_endpoint'):
 	mii_endpoint = settings.mii_endpoint
 
@@ -392,7 +393,7 @@ def signup_page(request):
 			'recaptcha': settings.RECAPTCHA_PUBLIC_KEY,
 			'invite_only': settings.invite_only,
 			'age': settings.age_allowed,
-			'mii_domain': mii_domain,
+			'mii_tmpl': fmt_nnid_happy,
 			'mii_endpoint': mii_endpoint,
 			#'classes': ['no-login-btn'],
 		})
@@ -980,7 +981,7 @@ def profile_settings(request):
 		'user': user,
 		'profile': profile,
 		'settings': settings,
-		'mii_domain': mii_domain,
+		'mii_tmpl': fmt_nnid_normal,
 		'mii_endpoint': mii_endpoint,
 	})
 
@@ -1979,6 +1980,7 @@ def create_invite(request):
 #@require_http_methods(['POST'])
 # Disabling login requirement since it's in signup now. Regret?
 #@login_required
+"""
 def origin_id(request):
 	if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
 		return HttpResponse("<a href='https://github.com/ariankordi/closedverse/blob/master/closedverse_main/util.py#L44-L86'>Please do not use this as an API!</a>")
@@ -1988,6 +1990,7 @@ def origin_id(request):
 	if not mii:
 		return HttpResponseBadRequest("The NNID provided doesn't exist.")
 	return HttpResponse(mii[0])
+"""
 
 def set_lighting(request):
 	if not request.session.get('lights', False):
